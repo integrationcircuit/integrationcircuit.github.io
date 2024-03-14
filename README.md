@@ -21,7 +21,7 @@ npm i
 
 Create a .env.local file in the root of the repo with your pipeline endpoint and bearer token:
 
-```javascript
+```javascript 
 NEXT_PUBLIC_API_ENDPOINT=YOUR_ENDPOINT
 NEXT_PUBLIC_BEARER_TOKEN=YOUR_TOKEN
 ```
