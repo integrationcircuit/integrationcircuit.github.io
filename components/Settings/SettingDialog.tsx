@@ -9,6 +9,7 @@ import { getSettings, saveSettings } from '@/utils/app/settings';
 import { Settings } from '@/types/settings';
 
 import HomeContext from '@/pages/api/home/home.context';
+import { render } from 'react-dom';
 
 interface Props {
   open: boolean;
@@ -48,8 +49,11 @@ export const SettingDialog: FC<Props> = ({ open, onClose }) => {
     console.log(uriElement.value);
     let tokenElement = document.getElementById('taskToken') as HTMLInputElement;
     console.log(tokenElement.value);
-    localStorage.setItem('userUri', uriElement.value);
-    localStorage.setItem('userToken', tokenElement.value);
+    let uriValue = uriElement.value.toLowerCase().replace('http://','https://');
+    //let uriValue = uriElement.value;
+    let tokenValue = tokenElement.value;
+    localStorage.setItem('userUri', uriValue);
+    localStorage.setItem('userToken', tokenValue);
     //alert(this.myRandomRef.current.value);
     homeDispatch({ field: 'lightMode', value: state.theme });
     saveSettings(state);
@@ -58,15 +62,14 @@ export const SettingDialog: FC<Props> = ({ open, onClose }) => {
   const getPlaceHolders = () => {
     let result = {"bearerToken": '', "taskUri": ''};
     const bearerToken = localStorage.getItem('userToken');
-    result.bearerToken = bearerToken != null ? bearerToken : 'Enter thy Uri';
+    result.bearerToken = bearerToken != null ? bearerToken : 'Enter your SnapLogic Task URL';
     const userUri = localStorage.getItem('userUri');
-    result.taskUri = userUri != null ? userUri : 'Enter thy Token';
+    result.taskUri = userUri != null ? userUri : 'Enter your SnapLogic Task Token';
     return result;
   }
 
   // Render nothing if the dialog is not open.
   if (!open) {
-    console.log('badoing');
     return <></>;
   }
 
@@ -94,13 +97,15 @@ export const SettingDialog: FC<Props> = ({ open, onClose }) => {
             </div>
 
             <div className="text-sm font-bold mb-2 text-black">
-              <label className='text-neutral-700 dark:text-neutral-200' htmlFor='taskUri'>Task URI:   </label>
-              <input className='border-black border-2' id='taskUri' type='text' placeholder={getPlaceHolders().taskUri} />
+              <label className='text-neutral-700 dark:text-neutral-200' htmlFor='taskUri'>Task URI:</label>
+              <br/>
+              <input className='border-black border-2 w-full' id='taskUri' type='text' placeholder={getPlaceHolders().taskUri} />
             </div>
 
             <div className="text-sm font-bold mb-2 text-black">
-              <label className='text-neutral-700 dark:text-neutral-200' htmlFor='taskToken'>Task Token:   </label>
-              <input className='border-black border-2' id='taskToken' type='text' placeholder={getPlaceHolders().bearerToken} />
+              <label className='text-neutral-700 dark:text-neutral-200' htmlFor='taskToken'>Task Token:</label>
+              <br/>
+              <input className='border-black border-2 w-full' id='taskToken' type='text' placeholder={getPlaceHolders().bearerToken} />
             </div>
 
             <select
@@ -113,6 +118,21 @@ export const SettingDialog: FC<Props> = ({ open, onClose }) => {
               <option value="dark">{t('Dark mode')}</option>
               <option value="light">{t('Light mode')}</option>
             </select>
+
+<span className='container flex flex-col items-center'>
+            <button
+              type='button'
+              className="w-1/2 px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+              onClick={() => {
+                localStorage.removeItem('userUri');
+                localStorage.removeItem('userToken');
+                (document.getElementById('taskUri') as HTMLInputElement).value = '';
+                (document.getElementById('taskUri') as HTMLInputElement).placeholder = getPlaceHolders().taskUri;
+                (document.getElementById('taskToken') as HTMLInputElement).value = '';
+                (document.getElementById('taskToken') as HTMLInputElement).placeholder = getPlaceHolders().bearerToken;
+                
+              }}>Clear Saved Values</button>
+              </span>
 
             <button
               type="button"

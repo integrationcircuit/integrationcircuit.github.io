@@ -25,6 +25,7 @@ import { ChatInput } from './ChatInput';
 import { ChatLoader } from './ChatLoader';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { Logo } from './Logo';
+import { json } from 'stream/consumers';
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -114,6 +115,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
         const response = await fetch(endpoint, {
           method: 'POST',
+          //mode: 'no-cors',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${bearerToken}`
@@ -147,6 +149,19 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
          // ROGER
          let answer: string = jsonResponse[0].completion as string;
           //let answer: string = jsonResponse[0];
+
+          // START STAN
+          let baseAnswer = jsonResponse[0];
+          let finalAnswer: string = '';
+          if (baseAnswer.choices[0]?.content) {
+            finalAnswer = baseAnswer.choices[0].content;
+          } else if (baseAnswer.completion) {
+            finalAnswer = baseAnswer.completion;
+          } else {
+            finalAnswer = baseAnswer;
+          }
+          answer = finalAnswer;
+          // END STAN
 
           console.log("LLM snap answer: ", answer);
 
