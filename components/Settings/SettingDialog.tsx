@@ -49,7 +49,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose }) => {
     console.log(uriElement.value);
     let tokenElement = document.getElementById('taskToken') as HTMLInputElement;
     console.log(tokenElement.value);
-    let uriValue = uriElement.value.toLowerCase().replace('http://','https://');
+    let uriValue = uriElement.value.replace('http://','https://');
     //let uriValue = uriElement.value;
     let tokenValue = tokenElement.value;
     localStorage.setItem('userUri', uriValue);

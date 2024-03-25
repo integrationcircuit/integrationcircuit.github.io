@@ -93,12 +93,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         //const endpoint = 'https://snapgpt.labs.snaplogicdev.com/api/1/rest/slsched/feed/snaplogic/se-demo/shared/hr_demo_se_team_task';
         //const bearerToken = 'OiEVMJqdIJJJeD2wmlzGdAFuOlW92N7R';
 
-        let endpoint : string = localStorage.getItem('userUri') ?? "";
-        let bearerToken : string  = localStorage.getItem('userToken') ?? "";
+        let endpoint: string = localStorage.getItem('userUri') ?? "";
+        let bearerToken: string = localStorage.getItem('userToken') ?? "";
 
         console.log('endpoint: ', endpoint);
         console.log('bearerToken: ', bearerToken);
-        
+
 
         console.log("process.env.NEXT_PUBLIC_API_ENDPOINT", process.env.NEXT_PUBLIC_API_ENDPOINT);
         console.log("process.env.NEXT_PUBLIC_BEARER_TOKEN", process.env.NEXT_PUBLIC_BEARER_TOKEN);
@@ -115,7 +115,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
         const response = await fetch(endpoint, {
           method: 'POST',
-          //mode: 'no-cors',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${bearerToken}`
@@ -145,22 +144,25 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           /*For new llm snappakcs, please use this line */
           console.log(jsonResponse[0]);
           // STAN
-         // let answer: string = jsonResponse[0].choices[0].message.content as string;
-         // ROGER
-         let answer: string = jsonResponse[0].completion as string;
+          // let answer: string = jsonResponse[0].choices[0].message.content as string;
+          // ROGER
+          let answer: string = jsonResponse[0].completion as string;
           //let answer: string = jsonResponse[0];
 
           // START STAN
           let baseAnswer = jsonResponse[0];
           let finalAnswer: string = '';
-          if (baseAnswer.choices[0]?.content) {
-            finalAnswer = baseAnswer.choices[0].content;
+          if (baseAnswer.choices && baseAnswer.choices[0]?.content) {
+            finalAnswer = baseAnswer.choices[0].content as string;
           } else if (baseAnswer.completion) {
-            finalAnswer = baseAnswer.completion;
+            finalAnswer = baseAnswer.completion as string;
+          } else if (baseAnswer.choices && baseAnswer.choices[0].message) {
+            finalAnswer = baseAnswer.choices[0].message.content as string;
           } else {
-            finalAnswer = baseAnswer;
+            finalAnswer = baseAnswer as string;
           }
           answer = finalAnswer;
+
           // END STAN
 
           console.log("LLM snap answer: ", answer);
